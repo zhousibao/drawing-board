@@ -7,20 +7,10 @@ npm install
 
 ### Compiles and hot-reloads for development
 ```
-npm run serve
+npm start  or  npm run serve 
 ```
+## 一款编辑图片的画板
+### 技术
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
+- 基于 VUE-CLI3 
+- 使用 Canvas/Element-UI/dva/antd 等前端技术开发
