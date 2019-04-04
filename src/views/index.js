@@ -10,25 +10,33 @@ export function windowToCanvas(canvas, x, y) {
   return data;
 }
 
-// 绘制橡皮擦的clip路径
-export function drawClipPath(canvas, con, loc) {
-  const eraserWidth = parseFloat(50);
-  con.save();
+// 绘制直线 
+export function drawLine(con, loc, lineColor, lineWidth) {
+  // 已经存在 moveTo点的情况
+  con.lineTo(loc.x, loc.y)
+  con.save()
+  con.strokeStyle = lineColor
+  con.lineWidth = lineWidth
+  con.stroke()
+  con.restore()
+}
 
+// 绘制橡皮擦的clip路径
+export function drawClipPath(canvas, con, loc, eraserRadius) {
+  con.save();
   con.beginPath();
-  con.arc(loc.x, loc.y, eraserWidth / 2, 0, Math.PI * 2, false);
+  con.arc(loc.x, loc.y, eraserRadius / 2, 0, Math.PI * 2, false);
   con.clip();
   con.save();
   con.globalCompositeOperation = 'destination-out';
   con.fillStyle = '#fff';
   con.fillRect(0, 0, canvas.width, canvas.height);
   con.restore();
-
   con.restore();
 }
 
-// 创建texteare
-export function createTexteare(loc) {
+// 创建textarea
+export function createTextarea(loc) {
   const textarea = document.createElement('textarea');
   textarea.id = 'textarea';
   textarea.rows = 3;
@@ -37,12 +45,12 @@ export function createTexteare(loc) {
   textarea.style.position = 'absolute';
   textarea.style.left = `${loc.x}px`;
   textarea.style.top = `${loc.y}px`;
-  textarea.style.zIndex = '101';
+  textarea.style.zIndex = '11';
 
   return textarea;
 }
-// 绘制texteare
-export function drawTexteare(con, value, loc, fontSize) {
+// 绘制textarea
+export function drawTextarea(con, value, loc, fontSize) {
   const arr = value.split('\n');
   con.save();
   con.textAlign = 'start';

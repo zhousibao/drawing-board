@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import DrawingBoard from './components/drawingBoard.vue';
+import DrawingBoard from './views/drawingBoard.vue';
 
 export default {
   name: 'App',

@@ -1,0 +1,243 @@
+<template>
+  <div class="draw-board">
+    <div class="board">
+      <div id="canvasTextarea">
+        <canvas id="canvasImg" width="1000" height="600"></canvas>
+        <canvas id="canvas" width="1000" height="600" :class="{'cursor-pen':action === 'pen','cursor-eraser':action === 'eraser','cursor-textarea':action === 'textarea'}"></canvas>
+      </div>
+      
+    </div>
+    <div class="menu">
+      <div class="menu-left">
+        <div :class="{'active' : action === 'choose'}" class="con" @click="chooseTool">
+          <svg-icon icon-class="icon_choose" :class-name="action === 'choose' ? 'icon-active': 'icon-default'" style="font-size:30px;"></svg-icon>
+        </div>
+        <PopoverPen :action="action" :line-width="lineWidth" :line-color="lineColor" @popoverPen="popoverPen" />
+        <PopoverEraser :action="action" :eraser-radius="eraserRadius" @popoverEraser="popoverEraser" />
+        <PopoverTextarea :action="action" :font-size="fontSize" @popoverTextarea="popoverTextarea" />
+        
+      </div>
+      <div class="menu-right"></div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { Message } from 'element-ui'
+import { PopoverPen, PopoverEraser, PopoverTextarea } from '@/components/popoverTool'
+import { windowToCanvas, drawLine, drawClipPath, createTextarea, drawTextarea } from './index.js'
+
+
+var canvasTextarea,canvasImg,conImg,canvas,con;
+export default {
+  name: 'DrawingBoard',
+  components: {
+    PopoverPen,
+    PopoverEraser,
+    PopoverTextarea,
+  },
+  props: {
+    
+  },
+  data() {
+    return {
+      action: 'choose', // 编辑模式
+
+      
+      //pen
+      lineWidth: undefined,
+      lineColor: undefined,
+      //eraser
+      eraserRadius: undefined,
+      //textarea
+      fontSize: undefined,
+      textareaPoint:{},
+    }
+  },
+  computed: {
+  },
+  watch: {
+  },
+  created() {
+
+  },
+  mounted() {
+    this.init();
+  },
+  methods: {
+    // 初始化
+    init() {
+      canvasTextarea = document.getElementById('canvasTextarea');
+      canvasImg = document.getElementById('canvasImg');
+      conImg = canvasImg.getContext('2d');
+      canvas = document.getElementById('canvas');
+      con = canvas.getContext('2d');
+
+
+      this.changeImage();
+    },
+    changeImage() {
+      const img = new Image();
+      img.src = 'https://raw.githubusercontent.com/zhousibao/drawing-board/master/src/assets/picture/tu1.jpg';
+
+      img.onerror = () => {
+        Message.error('图片加载失败，请刷新后重试！');
+      };
+
+      img.onload = () => {
+        Message.success('图片加载成功！');
+        con.clearRect(0, 0, canvas.width, canvas.height);
+        conImg.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvasImg.width, canvasImg.height);
+        this.mouseEvent();
+      };
+    },
+    // 事件处理
+    mouseEvent() {
+      let canAction = false
+      let canTextarea = true
+
+      canvas.onmousedown = (e) => {
+        const loc = windowToCanvas(canvas, e.clientX, e.clientY)
+        e.preventDefault()
+        canAction = true
+        if (this.action === 'pen') {
+          con.beginPath()
+          con.moveTo(loc.x, loc.y)
+        }
+        if (this.action === 'textarea') {
+          if (canTextarea) {
+            // 添加textarea文本框
+            this.textareaPoint = loc
+            const textarea = createTextarea(this.textareaPoint)
+            canvasTextarea.appendChild(textarea)
+            document.getElementById('textarea').focus()
+            canTextarea = false
+          } else {
+            // 绘制textarea文本
+            const textarea = document.getElementById('textarea')
+            drawTextarea(con, textarea.value, this.textareaPoint, this.fontSize)
+            canvasTextarea.removeChild(textarea)
+            canTextarea = true
+          }
+        }
+      }
+
+      canvas.onmousemove = (e) => {
+        const loc = windowToCanvas(canvas, e.clientX, e.clientY)
+
+        if (this.action === 'pen' && canAction) {
+          drawLine(con, loc, this.lineColor, this.lineWidth)
+        }
+        if (this.action === 'eraser' && canAction) {
+          drawClipPath(canvas, con, loc, this.eraserRadius)
+        }
+      }
+
+      canvas.onmouseup = (e) => {
+        if (this.action === 'eraser') {
+          const loc = windowToCanvas(canvas, e.clientX, e.clientY)
+          drawClipPath(canvas, con, loc, this.eraserRadius)
+        }
+
+        canAction = false
+      }
+      window.onmouseup = () => {
+        canAction = false
+      }
+    },
+
+
+
+
+
+    //
+    chooseTool(){
+      this.action = 'choose'
+    },
+    //
+    popoverPen(name, lineWidth, lineColor){
+      this.action = name
+      this.lineWidth = lineWidth
+      this.lineColor = lineColor
+    },
+    //
+    popoverEraser(name, eraserRadius){
+      this.action = name
+      this.eraserRadius = eraserRadius
+    },
+    //
+    popoverTextarea(name, fontSize){
+      this.action = name
+      this.fontSize = fontSize
+    },
+    
+    //
+
+  },
+};
+</script>
+<style rel="stylesheet/less" lang="less" scoped>
+.draw-board{
+  width: 1000px;
+  margin: 0 auto;
+
+  .board{
+    width: 1000px;
+    height: 600px;
+    position: relative;
+
+    #canvasTextarea{
+      position: relative;
+    }
+    #canvasImg{
+      position: relative;
+      z-index: 9;
+    }
+    #canvas{
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 10;
+    }
+    .cursor-pen{
+      cursor: url("../assets/icon/pen.png") 10 40, auto;
+    }
+    .cursor-eraser{
+      cursor: url("../assets/icon/eraser.png") 5 30, auto;
+    }
+    .cursor-textarea{
+      cursor: url("../assets/icon/textarea.png") 15 0, auto;
+    }
+  }
+
+  .menu{
+    width: 1000px;
+    height: 50px;
+    background: #2F303B;
+    display: flex;
+    justify-content: space-between;
+
+    .menu-left{
+      height: 50px;
+      width: 50%;
+      display: flex;
+      align-items: center;
+
+
+      .con{
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+    }
+    .menu-right{
+      height: 50px;
+      flex-grow: 1;
+    }
+  }
+}
+</style>
