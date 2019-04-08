@@ -1,22 +1,21 @@
 <template>
   <div class="popover-con">
     <el-popover
+      ref="eraser"
       v-model="popover"
       popper-class="popover-popover"
-      ref="eraser"
       placement="top-start"
       :visible-arrow="false"
       width="250"
-      trigger="click">
+      trigger="click"
+    >
       <div class="detail" @mouseleave="mouseleave">
-        
         <div v-for="cricle in cricleList" :key="cricle.value" :class="{'active' : eraserRadius === cricle.value}" @click="choose(cricle.value)">
           <div class="cricle" :style="{width:cricle.key + 'px',height:cricle.key + 'px'}"></div>
         </div>
-       
       </div>
     </el-popover>
-    <div v-popover:eraser :class="{'active' : action === 'eraser'}" class="con"  @click="onActive">
+    <div v-popover:eraser :class="{'active' : action === 'eraser'}" class="con" @click="onActive">
       <svg-icon icon-class="icon_eraser" :class-name="action === 'eraser' ? 'icon-active': 'icon-default'" style="font-size:30px;"></svg-icon>
     </div>
   </div>
@@ -29,27 +28,27 @@ export default {
     // 当前橡皮檫的直径大小
     eraserRadius: {
       type: Number,
-      default: 32
+      default: 32,
     },
     // 当前的绘图方式
     action: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
-      popover:false,
+      popover: false,
       // eraserRadius大小
       cricleList: [
-        {key:12, value:18},
-        {key:16, value:24},
-        {key:20, value:32},
-        {key:25, value:40},
-        {key:30, value:50}
+        { key: 12, value: 18 },
+        { key: 16, value: 24 },
+        { key: 20, value: 32 },
+        { key: 25, value: 40 },
+        { key: 30, value: 50 },
       ],
 
-    }
+    };
   },
   computed: {
   },
@@ -59,21 +58,21 @@ export default {
 
   },
   mounted() {
-    
+
   },
   methods: {
     // 选择pen绘制
-    onActive(){
-      this.$emit('popoverEraser', 'eraser', this.eraserRadius)
+    onActive() {
+      this.$emit('popoverEraser', 'eraser', this.eraserRadius);
     },
     // 选择字体粗细和颜色
-    choose(eraserRadius){
-      this.$emit('popoverEraser', 'eraser', eraserRadius)
+    choose(eraserRadius) {
+      this.$emit('popoverEraser', 'eraser', eraserRadius);
     },
     // 关闭popover
-    mouseleave(){
-      this.popover = false
-    }
+    mouseleave() {
+      this.popover = false;
+    },
   },
 };
 </script>
@@ -91,7 +90,7 @@ export default {
   height: 50px;
   background: @default;
   display: flex;
-    
+
   &>div{
     width: 50px;
     height: 50px;
@@ -109,7 +108,7 @@ export default {
   &>div:hover{
     background: @hover;
   }
-  
+
 }
 
 .con{

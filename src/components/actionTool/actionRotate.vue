@@ -1,7 +1,7 @@
 <template>
-    <div class="con" @click="onRotate">
-      <svg-icon icon-class="icon_rotate" class="con-icon"></svg-icon>
-    </div>
+  <div class="con" @click="onRotate">
+    <svg-icon icon-class="icon_rotate" class="con-icon"></svg-icon>
+  </div>
 </template>
 
 <script>
@@ -12,13 +12,13 @@ export default {
     // 当前旋转角度
     angle: {
       type: Number,
-      default: 0
+      default: 0,
     },
   },
   data() {
     return {
-      
-    }
+
+    };
   },
   computed: {
   },
@@ -28,16 +28,16 @@ export default {
 
   },
   mounted() {
-    
+
   },
   methods: {
     // 旋转
-    onRotate(){
+    onRotate() {
       let angle = this.angle + 90;
-      if(angle === 360){
-        angle = 0
+      if (angle === 360) {
+        angle = 0;
       }
-      this.$emit('actionRotate', angle)
+      this.$emit('actionRotate', angle);
     },
   },
 };

@@ -1,7 +1,7 @@
 <template>
-    <div class="con" @click="onSave">
-      <svg-icon icon-class="icon_save" class="con-icon"></svg-icon>
-    </div>
+  <div class="con" @click="onSave">
+    <svg-icon icon-class="icon_save" class="con-icon"></svg-icon>
+  </div>
 </template>
 
 <script>
@@ -12,8 +12,8 @@ export default {
   },
   data() {
     return {
-      
-    }
+
+    };
   },
   computed: {
   },
@@ -23,12 +23,12 @@ export default {
 
   },
   mounted() {
-    
+
   },
   methods: {
     // 保存
-    onSave(){
-      this.$emit('actionSave')
+    onSave() {
+      this.$emit('actionSave');
     },
   },
 };

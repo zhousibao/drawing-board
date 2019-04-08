@@ -10,15 +10,15 @@ export function windowToCanvas(canvas, x, y) {
   return data;
 }
 
-// 绘制直线 
+// 绘制直线
 export function drawLine(con, loc, lineColor, lineWidth) {
   // 已经存在 moveTo点的情况
-  con.lineTo(loc.x, loc.y)
-  con.save()
-  con.strokeStyle = lineColor
-  con.lineWidth = lineWidth
-  con.stroke()
-  con.restore()
+  con.lineTo(loc.x, loc.y);
+  con.save();
+  con.strokeStyle = lineColor;
+  con.lineWidth = lineWidth;
+  con.stroke();
+  con.restore();
 }
 
 // 绘制橡皮擦的clip路径
@@ -58,7 +58,7 @@ export function drawTextarea(con, value, loc, fontSize, fontColor) {
   con.font = `${fontSize}px Arial`;
   con.fillStyle = fontColor;
   const lineHeight = Math.ceil(con.measureText('W').width + (con.measureText('W').width / 6));
-  for (let i = 0; i < arr.length; i += 1) {
+  for (let i = 0; i < arr.length; i++) {
     if (arr[i]) {
       con.fillText(arr[i], loc.x, loc.y + (lineHeight * i) + ((lineHeight * 2) / 3));
     }
