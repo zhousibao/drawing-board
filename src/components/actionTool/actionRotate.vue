@@ -6,6 +6,7 @@
 
 <script>
 export default {
+  // 图片旋转后 原先绘制的内容将不会被保存
   name: 'ActionRotate',
   props: {
     // 当前旋转角度
@@ -32,7 +33,11 @@ export default {
   methods: {
     // 旋转
     onRotate(){
-      this.$emit('actionRotate', this.angle + 90)
+      let angle = this.angle + 90;
+      if(angle === 360){
+        angle = 0
+      }
+      this.$emit('actionRotate', angle)
     },
   },
 };

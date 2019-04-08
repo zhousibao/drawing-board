@@ -31,7 +31,7 @@ import { PopoverPen, PopoverEraser, PopoverTextarea } from '@/components/popover
 import { ActionRotate, ActionSave } from '@/components/actionTool'
 import { windowToCanvas, drawLine, drawClipPath, createTextarea, drawTextarea } from '@/utils/draw.js'
 import { proxyUrl } from '@/utils/tools.js'
-
+import url from '@/assets/picture/tu.jpg'
 
 var canvasTextarea,canvasImg,conImg,canvas,con;
 export default {
@@ -47,7 +47,7 @@ export default {
   props: {
     url: {
       type: String,
-      default:'https://raw.githubusercontent.com/zhousibao/drawing-board/master/src/assets/picture/tu1.jpg'
+      default:'https://raw.githubusercontent.com/zhousibao/drawing-board/master/src/assets/picture/tu.jpg'
     }
   },
   data() {
@@ -95,7 +95,8 @@ export default {
     // 切换图片
     changeImage() {
       const img = new Image();
-      img.src =  proxyUrl(this.url)
+      //img.src =  proxyUrl(this.url) // 网络图片
+      img.src =  proxyUrl(url) // 本地图片
 
       img.onerror = () => {
         Message.error('图片加载失败，请刷新后重试！');
@@ -108,65 +109,47 @@ export default {
         this.mouseEvent();
       };
     },
-    // 设置canvas大小
-    settingCanvas(){
+    // 旋转图片
+    rotateImage(angle) {
+      conImg.clearRect(0, 0, canvasImg.width, canvasImg.height)
+      con.clearRect(0, 0, canvas.width, canvas.height)
 
+      const img = new Image()
+      img.src = proxyUrl(url)
+
+      img.onerror = () => {
+        Message.error('图片加载失败，请刷新后重试！');
+      };
+
+      img.onload = () => {
+        // Message.success('图片加载成功！');
+        if (angle === 0) {
+          // 旋转 0
+          conImg.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvasImg.width, canvasImg.height)
+        } else if (angle === 90) {
+          // 旋转 90
+          conImg.save()
+          conImg.translate(canvasImg.width, 0)
+          conImg.rotate(Math.PI/2)
+          conImg.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvasImg.width, canvasImg.height)
+          conImg.restore()
+        } else if (angle === 180) {
+          // 旋转 180
+          conImg.save()
+          conImg.translate(canvasImg.width, canvasImg.height)
+          conImg.rotate(Math.PI)
+          conImg.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvasImg.width, canvasImg.height)
+          conImg.restore()
+        } else if (angle === 270) {
+          // 旋转 270
+          conImg.save()
+          conImg.translate(0, canvasImg.height)
+          conImg.rotate(Math.PI * 3 / 2)
+          conImg.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvasImg.width, canvasImg.height)
+          conImg.restore()
+        }
+      }
     },
-    //
-    // rotateImage(angle) {
-    //   conImg.clearRect(0, 0, canvasImg.width, canvasImg.height)
-    //   con.clearRect(0, 0, canvas.width, canvas.height)
-
-    //   const img = new Image()
-    //   img.src = proxyUrl(this.url)
-
-    //   img.onerror = () => {
-    //     Message.error('图片加载失败，请刷新后重试！');
-    //   };
-
-    //   img.onload = () => {
-    //     Message.success('图片加载成功！');
-
-    //     if (angle === 0) {
-    //       // 奇数次旋转
-    //       // console.log('旋转90')
-    //       that.settingCanvas(img.height, img.width)
-
-    //       conImg.save()
-    //       conImg.translate(canvasImg.width, 0)
-    //       conImg.rotate(Math.PI / 2)
-    //       conImg.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvasImg.height, canvasImg.width)
-    //       conImg.restore()
-    //     } else if (that.rotateTimes % 4 === 1) {
-    //       // 偶数次旋转
-    //       // console.log('旋转180')
-    //       that.settingCanvas(img.width, img.height)
-
-    //       conImg.save()
-    //       conImg.translate(canvasImg.width, canvasImg.height)
-    //       conImg.rotate(Math.PI)
-    //       conImg.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvasImg.width, canvasImg.height)
-    //       conImg.restore()
-    //     } else if (that.rotateTimes % 4 === 2) {
-    //       // 偶数次旋转
-    //       // console.log('旋转270')
-    //       that.settingCanvas(img.height, img.width)
-
-    //       conImg.save()
-    //       conImg.translate(0, canvasImg.height)
-    //       conImg.rotate(Math.PI * 3 / 2)
-    //       conImg.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvasImg.height, canvasImg.width)
-    //       conImg.restore()
-    //     } else if (that.rotateTimes % 4 === 3) {
-    //       // 偶数次旋转
-    //       // console.log('旋转360')
-    //       that.settingCanvas(img.width, img.height)
-
-    //       conImg.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvasImg.width, canvasImg.height)
-    //     }
-    //     that.rotateTimes = that.rotateTimes + 1
-    //   }
-    // },
     // 事件处理
     mouseEvent() {
       let canAction = false
@@ -250,6 +233,7 @@ export default {
     //
     actionRotate(angle){
       this.angle = angle
+      this.rotateImage(angle)
     },
     // 保存
     actionSave(){
@@ -279,12 +263,13 @@ export default {
 </script>
 <style rel="stylesheet/less" lang="less" scoped>
 .draw-board{
-  width: 1000px;
+  width: 800px;
   margin: 0 auto;
 
   .board{
-    width: 1000px;
-    height: 600px;
+    width: 100%;
+    height: 800px;
+    outline: #ccc solid thin;
     position: relative;
 
     #canvasTextarea{
@@ -312,7 +297,7 @@ export default {
   }
 
   .menu{
-    width: 1000px;
+    width: 100%;
     height: 50px;
     background: #2F303B;
     display: flex;
