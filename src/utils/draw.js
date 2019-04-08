@@ -50,13 +50,13 @@ export function createTextarea(loc) {
   return textarea;
 }
 // 绘制textarea
-export function drawTextarea(con, value, loc, fontSize) {
+export function drawTextarea(con, value, loc, fontSize, fontColor) {
   const arr = value.split('\n');
   con.save();
   con.textAlign = 'start';
   con.textBaseLine = 'bottom';
   con.font = `${fontSize}px Arial`;
-  con.fillStyle = 'red';
+  con.fillStyle = fontColor;
   const lineHeight = Math.ceil(con.measureText('W').width + (con.measureText('W').width / 6));
   for (let i = 0; i < arr.length; i += 1) {
     if (arr[i]) {

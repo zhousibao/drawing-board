@@ -6,17 +6,18 @@
       ref="textarea"
       placement="top-start"
       :visible-arrow="false"
-      width="150"
+      width="250"
       trigger="click">
       <div class="detail" @mouseleave="mouseleave">
-        <div :class="{'active' : fontSize === fontList[0]}" @click="choose(0)">
-          <svg-icon icon-class="icon_text_size" style="font-size:15px;"></svg-icon>
+        <div class="detail-top">
+          <div v-for="font in fontList" :key="font.value" :class="{'active' : fontSize === font.value}" @click="choose('fontSize', font.value)">
+            <svg-icon icon-class="icon_text_size" :style="{ fontSize:font.key + 'px'}"></svg-icon>
+          </div>
         </div>
-        <div :class="{'active' : fontSize === fontList[1]}" @click="choose(1)">
-          <svg-icon icon-class="icon_text_size" style="font-size:25px;"></svg-icon>
-        </div>
-        <div :class="{'active' : fontSize === fontList[2]}" @click="choose(2)">
-          <svg-icon icon-class="icon_text_size" style="font-size:35px;"></svg-icon>
+        <div class="detail-bottom">
+          <div v-for="color in colorList" :key="color" :class="{'active' : fontColor === color}" @click="choose('fontColor', color)">
+            <div class="cricle-color" :style="{background:color}"></div>
+          </div>
         </div>
       </div>
     </el-popover>
@@ -30,17 +31,14 @@
 export default {
   name: 'PopoverTextarea',
   props: {
-    // 字体大小集合
-    fontList: {
-      type: Array,
-      default: function(){
-        return [15,25,35]
-      }
-    },
     // 当前字体大小
     fontSize: {
       type: Number,
-      default: 25
+      default: 27
+    },
+    fontColor: {
+      type: String,
+      default: '#EF4C4F'
     },
     // 当前的绘图方式
     action: {
@@ -51,6 +49,16 @@ export default {
   data() {
     return {
       popover:false,
+      // 字体大小集合
+      fontList: [
+        {key:15, value:15},
+        {key:21, value:21},
+        {key:27, value:27},
+        {key:33, value:33},
+        {key:40, value:40}
+      ],
+      // lineColor种类
+      colorList: ['#EF4C4F',"#f90","#f4ea2a","#1afa29","#1296db","#13227a","#d4237a","#8a8a8a","#515151","#000"],
     }
   },
   computed: {
@@ -66,12 +74,15 @@ export default {
   methods: {
     // 选择文本绘制
     onActive(){
-      this.$emit('popoverTextarea', 'textarea', this.fontSize)
+      this.$emit('popoverTextarea', 'textarea', this.fontSize, this.fontColor)
     },
-    // 选择字体大小
-    choose(index){
-      const fontSize = this.fontList[index]
-      this.$emit('popoverTextarea', 'textarea', fontSize)
+    // 选择字体大小和颜色
+    choose(type,value){
+      if(type === 'fontSize'){
+        this.$emit('popoverTextarea', 'textarea', value, this.fontColor)
+      } else {
+        this.$emit('popoverTextarea', 'textarea', this.fontSize, value)
+      }
     },
     // 关闭popover
     mouseleave(){
@@ -90,21 +101,55 @@ export default {
 }
 
 .detail{
-  width: 150px;
-  height: 50px;
-  display: flex;
+  width: 250px;
   background: @default;
   
-  div{
-    width: 50px;
+  .detail-top{
     height: 50px;
+    border-bottom: 1px solid rgb(109, 116, 138);
     display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+
+    &>div{
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+
+      .cricle{
+        background: #fff;
+        border-radius: 50%;
+      }
+    }
+
+    &>div:hover{
+      background: @hover;
+    }
   }
-  div:hover{
-    background: @hover;
+
+  .detail-bottom{
+    height: 100px;
+    display: flex;
+    flex-wrap: wrap;
+    
+    &>div{
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+
+      .cricle-color{
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+      }
+    }
+    &>div:hover{
+      background: @hover;
+    }
   }
 }
 

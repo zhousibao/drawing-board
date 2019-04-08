@@ -14,7 +14,7 @@
         </div>
         <PopoverPen :action="action" :line-width="lineWidth" :line-color="lineColor" @popoverPen="popoverPen" />
         <PopoverEraser :action="action" :eraser-radius="eraserRadius" @popoverEraser="popoverEraser" />
-        <PopoverTextarea :action="action" :font-size="fontSize" @popoverTextarea="popoverTextarea" />
+        <PopoverTextarea :action="action" :font-size="fontSize" :font-color="fontColor" @popoverTextarea="popoverTextarea" />
         
       </div>
       <div class="menu-right">
@@ -62,6 +62,7 @@ export default {
       eraserRadius: undefined,
       //textarea
       fontSize: undefined,
+      fontColor: undefined,
       textareaPoint:{},
 
       // rotate
@@ -174,7 +175,7 @@ export default {
           } else {
             // 绘制textarea文本
             const textarea = document.getElementById('textarea')
-            drawTextarea(con, textarea.value, this.textareaPoint, this.fontSize)
+            drawTextarea(con, textarea.value, this.textareaPoint, this.fontSize, this.fontColor)
             canvasTextarea.removeChild(textarea)
             canTextarea = true
           }
@@ -225,9 +226,10 @@ export default {
       this.eraserRadius = eraserRadius
     },
     //
-    popoverTextarea(name, fontSize){
+    popoverTextarea(name, fontSize, fontColor){
       this.action = name
       this.fontSize = fontSize
+      this.fontColor = fontColor
     },
     
     //
