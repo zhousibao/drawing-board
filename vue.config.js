@@ -21,6 +21,14 @@ module.exports = {
         },
         onProxyRes() {},
       },
+      '/img-api': {
+        target: 'https://raw.githubusercontent.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '/img-api': '',
+        },
+        onProxyRes() {},
+      },
     },
   },
   lintOnSave: true,

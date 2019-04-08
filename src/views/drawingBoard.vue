@@ -2,8 +2,8 @@
   <div class="draw-board">
     <div class="board">
       <div id="canvasTextarea">
-        <canvas id="canvasImg" width="1000" height="600"></canvas>
-        <canvas id="canvas" width="1000" height="600" :class="{'cursor-pen':action === 'pen','cursor-eraser':action === 'eraser','cursor-textarea':action === 'textarea'}"></canvas>
+        <canvas id="canvasImg" width="800" height="800"></canvas>
+        <canvas id="canvas" width="800" height="800" :class="{'cursor-pen':action === 'pen','cursor-eraser':action === 'eraser','cursor-textarea':action === 'textarea'}"></canvas>
       </div>
       
     </div>
@@ -17,7 +17,10 @@
         <PopoverTextarea :action="action" :font-size="fontSize" @popoverTextarea="popoverTextarea" />
         
       </div>
-      <div class="menu-right"></div>
+      <div class="menu-right">
+        <ActionRotate :angle="angle" @actionRotate="actionRotate"/>
+        <ActionSave @actionSave="actionSave"/>
+      </div>
     </div>
   </div>
 </template>
@@ -25,7 +28,9 @@
 <script>
 import { Message } from 'element-ui'
 import { PopoverPen, PopoverEraser, PopoverTextarea } from '@/components/popoverTool'
-import { windowToCanvas, drawLine, drawClipPath, createTextarea, drawTextarea } from './index.js'
+import { ActionRotate, ActionSave } from '@/components/actionTool'
+import { windowToCanvas, drawLine, drawClipPath, createTextarea, drawTextarea } from '@/utils/draw.js'
+import { proxyUrl } from '@/utils/tools.js'
 
 
 var canvasTextarea,canvasImg,conImg,canvas,con;
@@ -35,9 +40,15 @@ export default {
     PopoverPen,
     PopoverEraser,
     PopoverTextarea,
+
+    ActionRotate,
+    ActionSave,
   },
   props: {
-    
+    url: {
+      type: String,
+      default:'https://raw.githubusercontent.com/zhousibao/drawing-board/master/src/assets/picture/tu1.jpg'
+    }
   },
   data() {
     return {
@@ -52,11 +63,17 @@ export default {
       //textarea
       fontSize: undefined,
       textareaPoint:{},
+
+      // rotate
+      angle: 0,
     }
   },
   computed: {
   },
   watch: {
+    url: function() {
+      this.changeImage()
+    }
   },
   created() {
 
@@ -73,12 +90,12 @@ export default {
       canvas = document.getElementById('canvas');
       con = canvas.getContext('2d');
 
-
       this.changeImage();
     },
+    // 切换图片
     changeImage() {
       const img = new Image();
-      img.src = 'https://raw.githubusercontent.com/zhousibao/drawing-board/master/src/assets/picture/tu1.jpg';
+      img.src =  proxyUrl(this.url)
 
       img.onerror = () => {
         Message.error('图片加载失败，请刷新后重试！');
@@ -91,6 +108,65 @@ export default {
         this.mouseEvent();
       };
     },
+    // 设置canvas大小
+    settingCanvas(){
+
+    },
+    //
+    // rotateImage(angle) {
+    //   conImg.clearRect(0, 0, canvasImg.width, canvasImg.height)
+    //   con.clearRect(0, 0, canvas.width, canvas.height)
+
+    //   const img = new Image()
+    //   img.src = proxyUrl(this.url)
+
+    //   img.onerror = () => {
+    //     Message.error('图片加载失败，请刷新后重试！');
+    //   };
+
+    //   img.onload = () => {
+    //     Message.success('图片加载成功！');
+
+    //     if (angle === 0) {
+    //       // 奇数次旋转
+    //       // console.log('旋转90')
+    //       that.settingCanvas(img.height, img.width)
+
+    //       conImg.save()
+    //       conImg.translate(canvasImg.width, 0)
+    //       conImg.rotate(Math.PI / 2)
+    //       conImg.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvasImg.height, canvasImg.width)
+    //       conImg.restore()
+    //     } else if (that.rotateTimes % 4 === 1) {
+    //       // 偶数次旋转
+    //       // console.log('旋转180')
+    //       that.settingCanvas(img.width, img.height)
+
+    //       conImg.save()
+    //       conImg.translate(canvasImg.width, canvasImg.height)
+    //       conImg.rotate(Math.PI)
+    //       conImg.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvasImg.width, canvasImg.height)
+    //       conImg.restore()
+    //     } else if (that.rotateTimes % 4 === 2) {
+    //       // 偶数次旋转
+    //       // console.log('旋转270')
+    //       that.settingCanvas(img.height, img.width)
+
+    //       conImg.save()
+    //       conImg.translate(0, canvasImg.height)
+    //       conImg.rotate(Math.PI * 3 / 2)
+    //       conImg.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvasImg.height, canvasImg.width)
+    //       conImg.restore()
+    //     } else if (that.rotateTimes % 4 === 3) {
+    //       // 偶数次旋转
+    //       // console.log('旋转360')
+    //       that.settingCanvas(img.width, img.height)
+
+    //       conImg.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvasImg.width, canvasImg.height)
+    //     }
+    //     that.rotateTimes = that.rotateTimes + 1
+    //   }
+    // },
     // 事件处理
     mouseEvent() {
       let canAction = false
@@ -172,6 +248,31 @@ export default {
     },
     
     //
+    actionRotate(angle){
+      this.angle = angle
+    },
+    // 保存
+    actionSave(){
+      const oldImg = new Image()
+      oldImg.crossOrigin = 'anonymous'
+      oldImg.src = canvasImg.toDataURL('image/png')
+      const drawImg = new Image()
+      drawImg.crossOrigin = 'anonymous'
+      drawImg.src = canvas.toDataURL('image/png')
+
+
+      oldImg.onload = () => {
+        con.clearRect(0, 0, canvas.width, canvas.height)
+        con.drawImage(oldImg, 0, 0, canvas.width, canvas.height)
+        con.drawImage(drawImg, 0, 0, canvas.width, canvas.height)
+
+        const file = canvas.toDataURL('image/jpeg')
+        // 合并成base64图片地址
+        console.log(file)
+      }
+
+    },
+
 
   },
 };
@@ -237,6 +338,9 @@ export default {
     .menu-right{
       height: 50px;
       flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
     }
   }
 }
