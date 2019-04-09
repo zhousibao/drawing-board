@@ -12,8 +12,8 @@ export default {
     // 当前旋转角度
     angle: {
       type: Number,
-      default: 0,
-    },
+      default: 0
+    }
   },
   data() {
     return {
@@ -38,8 +38,8 @@ export default {
         angle = 0;
       }
       this.$emit('actionRotate', angle);
-    },
-  },
+    }
+  }
 };
 </script>
 <style rel="stylesheet/less" lang="less" scoped>

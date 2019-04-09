@@ -29,8 +29,8 @@ export default {
     // 保存
     onSave() {
       this.$emit('actionSave');
-    },
-  },
+    }
+  }
 };
 </script>
 <style rel="stylesheet/less" lang="less" scoped>

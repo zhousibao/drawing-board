@@ -10,8 +10,8 @@ import DrawingBoard from './views/drawingBoard.vue';
 export default {
   name: 'App',
   components: {
-    DrawingBoard,
-  },
+    DrawingBoard
+  }
 };
 </script>
 

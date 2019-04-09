@@ -5,7 +5,7 @@ export function windowToCanvas(canvas, x, y) {
 
   const data = {
     x: (x - box.left) * (canvas.width / box.width),
-    y: (y - box.top) * (canvas.height / box.height),
+    y: (y - box.top) * (canvas.height / box.height)
   };
   return data;
 }

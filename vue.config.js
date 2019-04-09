@@ -5,7 +5,7 @@ module.exports = {
   devServer: {
     overlay: {
       warnings: true,
-      errors: true,
+      errors: true
     },
     // https: true,
     hot: true,
@@ -17,19 +17,19 @@ module.exports = {
         target: 'https://aaa-bbb-ccc.com',
         changeOrigin: true,
         pathRewrite: {
-          '/api': '',
+          '/api': ''
         },
-        onProxyRes() {},
+        onProxyRes() {}
       },
       '/img-api': {
         target: 'https://raw.githubusercontent.com',
         changeOrigin: true,
         pathRewrite: {
-          '/img-api': '',
+          '/img-api': ''
         },
-        onProxyRes() {},
-      },
-    },
+        onProxyRes() {}
+      }
+    }
   },
   lintOnSave: true,
 
@@ -46,7 +46,7 @@ module.exports = {
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
       .options({
-        symbolId: 'icon-[name]',
+        symbolId: 'icon-[name]'
       });
 
     // alias
@@ -54,7 +54,7 @@ module.exports = {
       .set('@', resolve('src'))
       .set('assets', resolve('src/assets'))
       .set('components', resolve('src/components'));
-  },
+  }
 
 
 };

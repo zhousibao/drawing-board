@@ -27,8 +27,8 @@
 import { Message } from 'element-ui';
 import { PopoverPen, PopoverEraser, PopoverTextarea } from '@/components/popoverTool';
 import { ActionRotate, ActionSave } from '@/components/actionTool';
-import { windowToCanvas, drawLine, drawClipPath, createTextarea, drawTextarea } from '@/utils/draw.js';
-import { proxyUrl } from '@/utils/tools.js';
+import { windowToCanvas, drawLine, drawClipPath, createTextarea, drawTextarea } from '../utils/draw';
+import { proxyUrl } from '../utils/tools';
 import url from '@/assets/picture/tu.jpg';
 
 let canvasTextarea; let canvasImg; let conImg; let canvas; let con;
@@ -40,13 +40,13 @@ export default {
     PopoverTextarea,
 
     ActionRotate,
-    ActionSave,
+    ActionSave
   },
   props: {
     url: {
       type: String,
-      default: 'https://raw.githubusercontent.com/zhousibao/drawing-board/master/src/assets/picture/tu.jpg',
-    },
+      default: 'https://raw.githubusercontent.com/zhousibao/drawing-board/master/src/assets/picture/tu.jpg'
+    }
   },
   data() {
     return {
@@ -64,15 +64,12 @@ export default {
       textareaPoint: {},
 
       // rotate
-      angle: 0,
+      angle: 0
     };
   },
   computed: {
   },
   watch: {
-    url() {
-      this.changeImage();
-    },
   },
   created() {
 
@@ -96,7 +93,6 @@ export default {
       const img = new Image();
       // img.src =  proxyUrl(this.url) // 网络图片
       img.src = proxyUrl(url); // 本地图片
-
       img.onerror = () => {
         Message.error('图片加载失败，请刷新后重试！');
       };
@@ -251,10 +247,10 @@ export default {
         // 合并成base64图片地址
         console.log(file);
       };
-    },
+    }
 
 
-  },
+  }
 };
 </script>
 <style rel="stylesheet/less" lang="less" scoped>

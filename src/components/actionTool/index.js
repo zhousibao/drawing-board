@@ -1,5 +1,6 @@
-import ActionRotate from './actionRotate'
-import ActionSave from './actionSave'
+import ActionRotate from './actionRotate.vue';
+import ActionSave from './actionSave.vue';
 
 
-export { ActionRotate, ActionSave }
+export { ActionRotate, ActionSave };
+
