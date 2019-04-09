@@ -1,6 +1,8 @@
 module.exports = {
   root: true,
   env: {
+    browser: true,
+    es6: true,
     node: true
   },
   'extends': [
@@ -20,6 +22,7 @@ module.exports = {
     "no-plusplus": 0,
     "no-multiple-empty-lines": [2, {"max": 2}],//空行最多不能超过2行
     "comma-dangle": [2, "never"], // 对象最后元素不加逗号
+    "no-mixed-operators": 0, // 循序混合运算
   },
   parserOptions: {
     parser: 'babel-eslint'
