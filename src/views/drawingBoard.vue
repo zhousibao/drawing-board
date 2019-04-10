@@ -3,7 +3,9 @@
     <div class="board">
       <div id="canvasTextarea">
         <canvas id="canvasImg" width="800" height="800"></canvas>
-        <canvas id="canvas" width="800" height="800" :class="{'cursor-pen':action === 'pen','cursor-eraser':action === 'eraser','cursor-textarea':action === 'textarea','cursor-clear':action === 'clear'}"></canvas>
+        <canvas id="canvas" width="800" height="800" :class="{'cursor-pen':action === 'pen','cursor-eraser':action === 'eraser','cursor-textarea':action === 'textarea',
+                                                              'cursor-shape':action === 'shape','cursor-clear':action === 'clear'}"
+        ></canvas>
       </div>
     </div>
     <div class="menu">
@@ -11,6 +13,7 @@
         <PopoverDefault :action="action" @popoverDefault="changeType" />
         <PopoverPen :action="action" :line-width="lineWidth" :line-color="lineColor" @popoverPen="popoverPen" />
         <PopoverTextarea :action="action" :font-size="fontSize" :font-color="fontColor" @popoverTextarea="popoverTextarea" />
+        <PopoverShape :action="action" :shape-type="shapeType" :shape-color="shapeColor" :is-fill="isFill" @popoverShape="popoverShape" />
         <PopoverEraser :action="action" :eraser-radius="eraserRadius" @popoverEraser="popoverEraser" />
         <PopoverClear :action="action" @popoverClear="changeType" />
       </div>
@@ -24,9 +27,9 @@
 
 <script>
 import { Message } from 'element-ui';
-import { PopoverDefault, PopoverPen, PopoverEraser, PopoverTextarea, PopoverClear } from '../components/popoverTool';
+import { PopoverDefault, PopoverPen, PopoverEraser, PopoverTextarea, PopoverShape, PopoverClear } from '../components/popoverTool';
 import { ActionRotate, ActionSave } from '../components/actionTool';
-import { windowToCanvas, drawLine, drawClipPathToEraser, createTextarea, drawTextarea, saveImageData, restoreImageData, calcRect, drawRect, drawClipPathToClear } from '../utils/draw';
+import { windowToCanvas, drawPath, drawClipPathToEraser, createTextarea, drawTextarea, saveImageData, restoreImageData, calcRect, drawRect, drawClipPathToClear, drawLine, drawDashedLine, drawArc } from '../utils/draw';
 import { proxyUrl } from '../utils/tools';
 import url from '../assets/picture/tu.jpg';
 
@@ -38,6 +41,7 @@ export default {
     PopoverPen,
     PopoverEraser,
     PopoverTextarea,
+    PopoverShape,
     PopoverClear,
 
     ActionRotate,
@@ -60,13 +64,19 @@ export default {
       // textarea
       fontSize: undefined,
       fontColor: undefined,
-      textareaPoint: {},
       // eraser
       eraserRadius: undefined,
-      // clear
-      startPoint: {},
-      endPoint: {},
-      imageData: null,
+
+      // shape
+      shapeType: undefined,
+      shapeColor: undefined,
+      isFill: undefined,
+
+      /** 绘制中使用的变量 */
+      imageData: null, // clear\shape
+      startPoint: {}, // textarea\clear\shape
+      endPoint: {}, // clear\shape
+
 
       // rotate
       angle: 0
@@ -166,20 +176,25 @@ export default {
         if (this.action === 'textarea') {
           if (canTextarea) {
             // 添加textarea文本框
-            this.textareaPoint = loc;
-            const textarea = createTextarea(this.textareaPoint);
+            this.startPoint = loc;
+            const textarea = createTextarea(this.startPoint);
             canvasTextarea.appendChild(textarea);
             document.getElementById('textarea').focus();
             canTextarea = false;
           } else {
             // 绘制textarea文本
             const textarea = document.getElementById('textarea');
-            drawTextarea(con, textarea.value, this.textareaPoint, this.fontSize, this.fontColor);
+            drawTextarea(con, textarea.value, this.startPoint, this.fontSize, this.fontColor);
             canvasTextarea.removeChild(textarea);
             canTextarea = true;
           }
         }
         if (this.action === 'clear') {
+          this.imageData = saveImageData(canvas, con);
+          this.startPoint = loc;
+          this.endPoint = loc;
+        }
+        if (this.action === 'shape') {
           this.imageData = saveImageData(canvas, con);
           this.startPoint = loc;
           this.endPoint = loc;
@@ -190,7 +205,7 @@ export default {
         const loc = windowToCanvas(canvas, e.clientX, e.clientY);
 
         if (this.action === 'pen' && canAction) {
-          drawLine(con, loc, this.lineColor, this.lineWidth);
+          drawPath(con, loc, this.lineColor, this.lineWidth);
         }
         if (this.action === 'eraser' && canAction) {
           drawClipPathToEraser(canvas, con, loc, this.eraserRadius);
@@ -199,7 +214,24 @@ export default {
           restoreImageData(con, this.imageData);
           this.endPoint = loc;
           const rect = calcRect(this.startPoint, this.endPoint);
-          drawRect(con, rect, true, false, 'rgba(25,130,255,0.2)', false);
+          drawRect(con, rect, true, 'rgba(25,130,255,0.2)');
+        }
+        if (this.action === 'shape' && canAction) {
+          if (this.shapeType === 'line') {
+            restoreImageData(con, this.imageData);
+            this.endPoint = loc;
+            drawLine(con, this.startPoint, this.endPoint, this.shapeColor);
+          }
+          if (this.shapeType === 'dashed') {
+            restoreImageData(con, this.imageData);
+            this.endPoint = loc;
+            drawDashedLine(con, this.startPoint, this.endPoint, this.shapeColor);
+          }
+          if (this.shapeType === 'arc') {
+            restoreImageData(con, this.imageData);
+            this.endPoint = loc;
+            drawArc(con, this.startPoint, this.endPoint, this.isFill, this.shapeColor);
+          }
         }
       };
 
@@ -213,6 +245,23 @@ export default {
           const rect = calcRect(this.startPoint, this.endPoint);
           drawClipPathToClear(canvas, con, rect);
         }
+        if (this.action === 'shape' && canAction) {
+          if (this.shapeType === 'line') {
+            restoreImageData(con, this.imageData);
+            this.endPoint = loc;
+            drawLine(con, this.startPoint, this.endPoint, this.shapeColor);
+          }
+          if (this.shapeType === 'dashed') {
+            restoreImageData(con, this.imageData);
+            this.endPoint = loc;
+            drawDashedLine(con, this.startPoint, this.endPoint, this.shapeColor);
+          }
+          if (this.shapeType === 'arc') {
+            restoreImageData(con, this.imageData);
+            this.endPoint = loc;
+            drawArc(con, this.startPoint, this.endPoint, this.isFill, this.shapeColor);
+          }
+        }
 
         canAction = false;
       };
@@ -221,6 +270,20 @@ export default {
         if (this.action === 'clear' && canAction) {
           const rect = calcRect(this.startPoint, this.endPoint);
           drawClipPathToClear(canvas, con, rect);
+        }
+        if (this.action === 'shape' && canAction) {
+          if (this.shapeType === 'line') {
+            restoreImageData(con, this.imageData);
+            drawLine(con, this.startPoint, this.endPoint, this.shapeColor);
+          }
+          if (this.shapeType === 'dashed') {
+            restoreImageData(con, this.imageData);
+            drawDashedLine(con, this.startPoint, this.endPoint, this.shapeColor);
+          }
+          if (this.shapeType === 'arc') {
+            restoreImageData(con, this.imageData);
+            drawArc(con, this.startPoint, this.endPoint, this.isFill, this.shapeColor);
+          }
         }
 
         canAction = false;
@@ -248,6 +311,13 @@ export default {
       this.action = name;
       this.fontSize = fontSize;
       this.fontColor = fontColor;
+    },
+    //
+    popoverShape(name, shapeType, shapeColor, isFill) {
+      this.action = name;
+      this.shapeType = shapeType;
+      this.shapeColor = shapeColor;
+      this.isFill = isFill;
     },
 
     //
@@ -303,18 +373,6 @@ export default {
       left: 0;
       top: 0;
       z-index: 10;
-    }
-    .cursor-pen{
-      cursor: url("../assets/icon/pen.png") 10 40, auto;
-    }
-    .cursor-eraser{
-      cursor: url("../assets/icon/eraser.png") 5 30, auto;
-    }
-    .cursor-textarea{
-      cursor: url("../assets/icon/textarea.png") 15 0, auto;
-    }
-    .cursor-clear{
-      cursor: url("../assets/icon/clear.png") 12 12, auto;
     }
   }
 
