@@ -22,7 +22,7 @@ export function drawLine(con, loc, lineColor, lineWidth) {
 }
 
 // 绘制橡皮擦的clip路径
-export function drawClipPath(canvas, con, loc, eraserRadius) {
+export function drawClipPathToEraser(canvas, con, loc, eraserRadius) {
   con.save();
   con.beginPath();
   con.arc(loc.x, loc.y, eraserRadius / 2, 0, Math.PI * 2, false);
@@ -49,6 +49,7 @@ export function createTextarea(loc) {
 
   return textarea;
 }
+
 // 绘制textarea
 export function drawTextarea(con, value, loc, fontSize, fontColor) {
   const arr = value.split('\n');
@@ -65,4 +66,65 @@ export function drawTextarea(con, value, loc, fontSize, fontColor) {
   }
   con.restore();
 }
+
+// 保留当前画布ImageData
+export function saveImageData(canvas, con) {
+  return con.getImageData(0, 0, canvas.width, canvas.height);
+}
+// 把上一步保留的ImageData绘制到画布上
+export function restoreImageData(con, imageData) {
+  con.putImageData(imageData, 0, 0);
+}
+
+// 根据两点计算矩形
+export function calcRect(startPoint, endPoint) {
+  const rect = {}; // 矩形对象
+  if (startPoint.x <= endPoint.x) {
+    rect.x = startPoint.x;
+  } else {
+    rect.x = endPoint.x;
+  }
+
+  if (startPoint.y <= endPoint.y) {
+    rect.y = startPoint.y;
+  } else {
+    rect.y = endPoint.y;
+  }
+  rect.width = Math.abs(startPoint.x - endPoint.x);
+  rect.height = Math.abs(startPoint.y - endPoint.y);
+
+  return rect;
+}
+
+// 绘制矩形
+export function drawRect(con, rect, isFill, isStorke, fillStyle, strokeStyle) {
+  con.beginPath();
+  con.save();
+  con.rect(rect.x, rect.y, rect.width, rect.height);
+
+  if (isFill) {
+    con.fillStyle = fillStyle;
+    con.fill();
+  }
+  if (isStorke) {
+    con.strokeStyle = strokeStyle;
+    con.Storke();
+  }
+  con.restore();
+}
+
+// 绘制局部清除clip路径
+export function drawClipPathToClear(canvas, con, rect) {
+  con.save();
+  con.beginPath();
+  con.rect(rect.x, rect.y, rect.width, rect.height);
+  con.clip();
+  con.save();
+  con.globalCompositeOperation = 'destination-out';
+  con.fillStyle = '#fff';
+  con.fillRect(0, 0, canvas.width, canvas.height);
+  con.restore();
+  con.restore();
+}
+
 

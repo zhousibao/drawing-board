@@ -3,17 +3,16 @@
     <div class="board">
       <div id="canvasTextarea">
         <canvas id="canvasImg" width="800" height="800"></canvas>
-        <canvas id="canvas" width="800" height="800" :class="{'cursor-pen':action === 'pen','cursor-eraser':action === 'eraser','cursor-textarea':action === 'textarea'}"></canvas>
+        <canvas id="canvas" width="800" height="800" :class="{'cursor-pen':action === 'pen','cursor-eraser':action === 'eraser','cursor-textarea':action === 'textarea','cursor-clear':action === 'clear'}"></canvas>
       </div>
     </div>
     <div class="menu">
       <div class="menu-left">
-        <div :class="{'active' : action === 'choose'}" class="con" @click="chooseTool">
-          <svg-icon icon-class="icon_choose" :class-name="action === 'choose' ? 'icon-active': 'icon-default'" style="font-size:30px;"></svg-icon>
-        </div>
+        <PopoverDefault :action="action" @popoverDefault="changeType" />
         <PopoverPen :action="action" :line-width="lineWidth" :line-color="lineColor" @popoverPen="popoverPen" />
-        <PopoverEraser :action="action" :eraser-radius="eraserRadius" @popoverEraser="popoverEraser" />
         <PopoverTextarea :action="action" :font-size="fontSize" :font-color="fontColor" @popoverTextarea="popoverTextarea" />
+        <PopoverEraser :action="action" :eraser-radius="eraserRadius" @popoverEraser="popoverEraser" />
+        <PopoverClear :action="action" @popoverClear="changeType" />
       </div>
       <div class="menu-right">
         <ActionRotate :angle="angle" @actionRotate="actionRotate" />
@@ -25,19 +24,21 @@
 
 <script>
 import { Message } from 'element-ui';
-import { PopoverPen, PopoverEraser, PopoverTextarea } from '@/components/popoverTool';
-import { ActionRotate, ActionSave } from '@/components/actionTool';
-import { windowToCanvas, drawLine, drawClipPath, createTextarea, drawTextarea } from '../utils/draw';
+import { PopoverDefault, PopoverPen, PopoverEraser, PopoverTextarea, PopoverClear } from '../components/popoverTool';
+import { ActionRotate, ActionSave } from '../components/actionTool';
+import { windowToCanvas, drawLine, drawClipPathToEraser, createTextarea, drawTextarea, saveImageData, restoreImageData, calcRect, drawRect, drawClipPathToClear } from '../utils/draw';
 import { proxyUrl } from '../utils/tools';
-import url from '@/assets/picture/tu.jpg';
+import url from '../assets/picture/tu.jpg';
 
 let canvasTextarea; let canvasImg; let conImg; let canvas; let con;
 export default {
   name: 'DrawingBoard',
   components: {
+    PopoverDefault,
     PopoverPen,
     PopoverEraser,
     PopoverTextarea,
+    PopoverClear,
 
     ActionRotate,
     ActionSave
@@ -50,18 +51,22 @@ export default {
   },
   data() {
     return {
-      action: 'choose', // 编辑模式
+      action: 'default', // 编辑模式
 
 
       // pen
       lineWidth: undefined,
       lineColor: undefined,
-      // eraser
-      eraserRadius: undefined,
       // textarea
       fontSize: undefined,
       fontColor: undefined,
       textareaPoint: {},
+      // eraser
+      eraserRadius: undefined,
+      // clear
+      startPoint: {},
+      endPoint: {},
+      imageData: null,
 
       // rotate
       angle: 0
@@ -174,6 +179,11 @@ export default {
             canTextarea = true;
           }
         }
+        if (this.action === 'clear') {
+          this.imageData = saveImageData(canvas, con);
+          this.startPoint = loc;
+          this.endPoint = loc;
+        }
       };
 
       canvas.onmousemove = (e) => {
@@ -183,27 +193,44 @@ export default {
           drawLine(con, loc, this.lineColor, this.lineWidth);
         }
         if (this.action === 'eraser' && canAction) {
-          drawClipPath(canvas, con, loc, this.eraserRadius);
+          drawClipPathToEraser(canvas, con, loc, this.eraserRadius);
+        }
+        if (this.action === 'clear' && canAction) {
+          restoreImageData(con, this.imageData);
+          this.endPoint = loc;
+          const rect = calcRect(this.startPoint, this.endPoint);
+          drawRect(con, rect, true, false, 'rgba(25,130,255,0.2)', false);
         }
       };
 
       canvas.onmouseup = (e) => {
-        if (this.action === 'eraser') {
-          const loc = windowToCanvas(canvas, e.clientX, e.clientY);
-          drawClipPath(canvas, con, loc, this.eraserRadius);
+        const loc = windowToCanvas(canvas, e.clientX, e.clientY);
+
+        if (this.action === 'eraser' && canAction) {
+          drawClipPathToEraser(canvas, con, loc, this.eraserRadius);
+        }
+        if (this.action === 'clear' && canAction) {
+          const rect = calcRect(this.startPoint, this.endPoint);
+          drawClipPathToClear(canvas, con, rect);
         }
 
         canAction = false;
       };
+
       window.onmouseup = () => {
+        if (this.action === 'clear' && canAction) {
+          const rect = calcRect(this.startPoint, this.endPoint);
+          drawClipPathToClear(canvas, con, rect);
+        }
+
         canAction = false;
       };
     },
 
 
     //
-    chooseTool() {
-      this.action = 'choose';
+    changeType(type) {
+      this.action = type;
     },
     //
     popoverPen(name, lineWidth, lineColor) {
@@ -286,6 +313,9 @@ export default {
     .cursor-textarea{
       cursor: url("../assets/icon/textarea.png") 15 0, auto;
     }
+    .cursor-clear{
+      cursor: url("../assets/icon/clear.png") 12 12, auto;
+    }
   }
 
   .menu{
@@ -300,18 +330,8 @@ export default {
       width: 50%;
       display: flex;
       align-items: center;
-
-
-      .con{
-        width: 50px;
-        height: 50px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
     }
+
     .menu-right{
       height: 50px;
       flex-grow: 1;
