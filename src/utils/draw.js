@@ -178,3 +178,5 @@ export function drawArc(con, startPoint, endPoint, isFill, color) {
 }
 
 
+// 绘制 正多边形
+

@@ -30,6 +30,7 @@ import { Message } from 'element-ui';
 import { PopoverDefault, PopoverPen, PopoverEraser, PopoverTextarea, PopoverShape, PopoverClear } from '../components/popoverTool';
 import { ActionRotate, ActionSave } from '../components/actionTool';
 import { windowToCanvas, drawPath, drawClipPathToEraser, createTextarea, drawTextarea, saveImageData, restoreImageData, calcRect, drawRect, drawClipPathToClear, drawLine, drawDashedLine, drawArc } from '../utils/draw';
+import Polygon from '../utils/polygon';
 import { proxyUrl } from '../utils/tools';
 import url from '../assets/picture/tu.jpg';
 
@@ -231,6 +232,16 @@ export default {
             restoreImageData(con, this.imageData);
             this.endPoint = loc;
             drawArc(con, this.startPoint, this.endPoint, this.isFill, this.shapeColor);
+          }
+          if (this.shapeType === 'triangle') {
+            restoreImageData(con, this.imageData);
+            this.endPoint = loc;
+            const polygon = new Polygon(this.startPoint, this.endPoint, 3, this.shapeColor);
+            if (this.isFill) {
+              polygon.fill(con);
+            } else {
+              polygon.stroke(con);
+            }
           }
         }
       };
