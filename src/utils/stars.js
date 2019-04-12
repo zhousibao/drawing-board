@@ -1,17 +1,17 @@
 import Point from './point';
 
-/* 多边形对象 */
+/* 五角星对象 */
 // startPoint 中心点
 // endPoint 第一个顶点
-// sides 边数
 // style 样式颜色
-
-class Polygon {
-  constructor(startPoint, endPoint, sides, style) {
+// 五角星有 10个顶点
+// 五角星每个顶点间的夹角为360/10=36°
+class Stars {
+  constructor(startPoint, endPoint, style) {
     this.startPoint = startPoint;
     this.endPoint = endPoint;
-    this.sides = sides;
     this.style = style;
+    this.sides = 10; // 五角星有 10个顶点
   }
 
   // 获取半径
@@ -71,9 +71,11 @@ class Polygon {
     const radius = this.getRadius();
     const angle = this.getAngle();
     let radian = angle / 180 * Math.PI; // 弧度
+    let starsRadius;
 
     for (let i = 0; i < this.sides; i++) {
-      points.push(new Point(this.startPoint.x + radius * Math.cos(radian), this.startPoint.y - radius * Math.sin(radian)));
+      starsRadius = i % 2 === 0 ? radius : radius / 5 * 2; // 定义短顶点与长顶点的比列为 2:5
+      points.push(new Point(this.startPoint.x + starsRadius * Math.cos(radian), this.startPoint.y - starsRadius * Math.sin(radian)));
       radian += 2 * Math.PI / this.sides;
     }
 
@@ -106,4 +108,4 @@ class Polygon {
   }
 }
 
-export default Polygon;
+export default Stars;

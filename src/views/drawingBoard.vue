@@ -31,6 +31,8 @@ import { PopoverDefault, PopoverPen, PopoverEraser, PopoverTextarea, PopoverShap
 import { ActionRotate, ActionSave } from '../components/actionTool';
 import { windowToCanvas, drawPath, drawClipPathToEraser, createTextarea, drawTextarea, saveImageData, restoreImageData, calcRect, drawRect, drawClipPathToClear, drawLine, drawDashedLine, drawArc } from '../utils/draw';
 import Polygon from '../utils/polygon';
+import Stars from '../utils/stars';
+import Ellipse from '../utils/ellipse';
 import { proxyUrl } from '../utils/tools';
 import url from '../assets/picture/tu.jpg';
 
@@ -245,6 +247,22 @@ export default {
           if (this.shapeType === 'rect') {
             const rect = calcRect(this.startPoint, this.endPoint);
             drawRect(con, rect, this.isFill, this.shapeColor);
+          }
+          if (this.shapeType === 'stars') {
+            const stars = new Stars(this.startPoint, this.endPoint, this.shapeColor);
+            if (this.isFill) {
+              stars.fill(con);
+            } else {
+              stars.stroke(con);
+            }
+          }
+          if (this.shapeType === 'ellipse') {
+            const ellipse = new Ellipse(this.startPoint, this.endPoint, this.shapeColor);
+            if (this.isFill) {
+              ellipse.fill(con);
+            } else {
+              ellipse.stroke(con);
+            }
           }
         }
       };

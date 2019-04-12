@@ -1,16 +1,11 @@
-import Point from './point';
-
-/* 多边形对象 */
+/* 椭圆对象对象 */
 // startPoint 中心点
-// endPoint 第一个顶点
-// sides 边数
+// endPoint 边缘点
 // style 样式颜色
-
-class Polygon {
-  constructor(startPoint, endPoint, sides, style) {
+class Ellipse {
+  constructor(startPoint, endPoint, style) {
     this.startPoint = startPoint;
     this.endPoint = endPoint;
-    this.sides = sides;
     this.style = style;
   }
 
@@ -65,29 +60,24 @@ class Polygon {
     return angle;
   }
 
-  // 获取所有点
-  getPoints() {
-    const points = [];
+  // 获取长轴短轴
+  getAxis() {
+    const axis = {};
     const radius = this.getRadius();
     const angle = this.getAngle();
-    let radian = angle / 180 * Math.PI; // 弧度
+    const radian = angle / 180 * Math.PI; // 弧度
 
-    for (let i = 0; i < this.sides; i++) {
-      points.push(new Point(this.startPoint.x + radius * Math.cos(radian), this.startPoint.y - radius * Math.sin(radian)));
-      radian += 2 * Math.PI / this.sides;
-    }
+    axis.a = radius * Math.cos(radian);
+    axis.b = radius * Math.sin(radian);
 
-    return points;
+    return axis;
   }
-  // 链接所有点
+  // 绘制
   createPath(con) {
-    const points = this.getPoints();
+    const axis = this.getAxis();
 
     con.beginPath();
-    con.moveTo(points[0].x, points[0].y);
-    for (let i = 1; i < this.sides; i++) {
-      con.lineTo(points[i].x, points[i].y);
-    }
+    con.ellipse(this.startPoint.x, this.startPoint.y, axis.a, axis.b, 0, 0, Math.PI * 2, true);
     con.closePath();
   }
   stroke(con) {
@@ -106,4 +96,4 @@ class Polygon {
   }
 }
 
-export default Polygon;
+export default Ellipse;

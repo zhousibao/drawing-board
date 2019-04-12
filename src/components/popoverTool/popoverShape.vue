@@ -71,7 +71,7 @@ export default {
     return {
       popover: false,
       // shapeList
-      shapeList: ['line', 'dashed', 'arc', 'triangle', 'rect', 'hexagon', 'stars'],
+      shapeList: ['line', 'dashed', 'arc', 'triangle', 'rect', 'hexagon', 'stars', 'ellipse'],
       // shapeList
       colorList: ['#EF4C4F', '#f90', '#1afa29', '#1296db', '#d4237a', '#000']
 
