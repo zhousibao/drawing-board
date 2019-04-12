@@ -218,60 +218,45 @@ export default {
           drawRect(con, rect, true, 'rgba(25,130,255,0.2)');
         }
         if (this.action === 'shape' && canAction) {
+          restoreImageData(con, this.imageData);
+          this.endPoint = loc;
+
           if (this.shapeType === 'line') {
-            restoreImageData(con, this.imageData);
-            this.endPoint = loc;
             drawLine(con, this.startPoint, this.endPoint, this.shapeColor);
           }
           if (this.shapeType === 'dashed') {
-            restoreImageData(con, this.imageData);
-            this.endPoint = loc;
             drawDashedLine(con, this.startPoint, this.endPoint, this.shapeColor);
           }
           if (this.shapeType === 'arc') {
-            restoreImageData(con, this.imageData);
-            this.endPoint = loc;
             drawArc(con, this.startPoint, this.endPoint, this.isFill, this.shapeColor);
           }
-          if (this.shapeType === 'triangle') {
-            restoreImageData(con, this.imageData);
-            this.endPoint = loc;
-            const polygon = new Polygon(this.startPoint, this.endPoint, 3, this.shapeColor);
+          if (this.shapeType === 'triangle' || this.shapeType === 'hexagon') {
+            let sides = 3;
+            if (this.shapeType === 'hexagon') {
+              sides = 6;
+            }
+            const polygon = new Polygon(this.startPoint, this.endPoint, sides, this.shapeColor);
             if (this.isFill) {
               polygon.fill(con);
             } else {
               polygon.stroke(con);
             }
           }
+          if (this.shapeType === 'rect') {
+            const rect = calcRect(this.startPoint, this.endPoint);
+            drawRect(con, rect, this.isFill, this.shapeColor);
+          }
         }
       };
 
       canvas.onmouseup = (e) => {
         const loc = windowToCanvas(canvas, e.clientX, e.clientY);
-
         if (this.action === 'eraser' && canAction) {
           drawClipPathToEraser(canvas, con, loc, this.eraserRadius);
         }
         if (this.action === 'clear' && canAction) {
           const rect = calcRect(this.startPoint, this.endPoint);
           drawClipPathToClear(canvas, con, rect);
-        }
-        if (this.action === 'shape' && canAction) {
-          if (this.shapeType === 'line') {
-            restoreImageData(con, this.imageData);
-            this.endPoint = loc;
-            drawLine(con, this.startPoint, this.endPoint, this.shapeColor);
-          }
-          if (this.shapeType === 'dashed') {
-            restoreImageData(con, this.imageData);
-            this.endPoint = loc;
-            drawDashedLine(con, this.startPoint, this.endPoint, this.shapeColor);
-          }
-          if (this.shapeType === 'arc') {
-            restoreImageData(con, this.imageData);
-            this.endPoint = loc;
-            drawArc(con, this.startPoint, this.endPoint, this.isFill, this.shapeColor);
-          }
         }
 
         canAction = false;
@@ -281,20 +266,6 @@ export default {
         if (this.action === 'clear' && canAction) {
           const rect = calcRect(this.startPoint, this.endPoint);
           drawClipPathToClear(canvas, con, rect);
-        }
-        if (this.action === 'shape' && canAction) {
-          if (this.shapeType === 'line') {
-            restoreImageData(con, this.imageData);
-            drawLine(con, this.startPoint, this.endPoint, this.shapeColor);
-          }
-          if (this.shapeType === 'dashed') {
-            restoreImageData(con, this.imageData);
-            drawDashedLine(con, this.startPoint, this.endPoint, this.shapeColor);
-          }
-          if (this.shapeType === 'arc') {
-            restoreImageData(con, this.imageData);
-            drawArc(con, this.startPoint, this.endPoint, this.isFill, this.shapeColor);
-          }
         }
 
         canAction = false;

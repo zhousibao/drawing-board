@@ -176,7 +176,3 @@ export function drawArc(con, startPoint, endPoint, isFill, color) {
   }
   con.restore();
 }
-
-
-// 绘制 正多边形
-

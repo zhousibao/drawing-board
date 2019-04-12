@@ -63,8 +63,6 @@ class Polygon {
     }
 
     // console.log(angle);
-
-
     return angle;
   }
 
@@ -72,11 +70,12 @@ class Polygon {
   getPoints() {
     const points = [];
     const radius = this.getRadius();
-    let angle = this.getAngle();
+    const angle = this.getAngle();
+    let radian = angle / 180 * Math.PI; // 弧度
 
     for (let i = 0; i < this.sides; i++) {
-      points.push(new Point(this.startPoint.x + radius * Math.sin(angle), this.startPoint.y - radius * Math.cos(angle)));
-      angle += 2 * Math.PI / this.sides;
+      points.push(new Point(this.startPoint.x + radius * Math.cos(radian), this.startPoint.y - radius * Math.sin(radian)));
+      radian += 2 * Math.PI / this.sides;
     }
 
     return points;
