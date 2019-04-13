@@ -1,3 +1,4 @@
+import Message from '../components/Message';
 /* 椭圆对象对象 */
 // startPoint 中心点
 // endPoint 边缘点
@@ -80,7 +81,9 @@ class Ellipse {
     if (con.ellipse) {
       con.ellipse(this.startPoint.x, this.startPoint.y, axis.a, axis.b, 0, 0, Math.PI * 2, true);
     } else {
-      console.log('浏览器不支持绘制椭圆函数ellipse');
+      Message({
+        message: '浏览器不支持绘制椭圆函数ellipse'
+      });
     }
 
 

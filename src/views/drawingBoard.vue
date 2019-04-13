@@ -26,6 +26,9 @@
 </template>
 
 <script>
+import Indicator from '../components/Indicator';
+import Toast from '../components/Toast';
+import Message from '../components/Message';
 import { PopoverDefault, PopoverPen, PopoverEraser, PopoverTextarea, PopoverShape, PopoverClear } from '../components/popoverTool';
 import { ActionRotate, ActionSave } from '../components/actionTool';
 import { windowToCanvas, drawPath, drawClipPathToEraser, createTextarea, drawTextarea, saveImageData, restoreImageData, calcRect, drawRect, drawClipPathToClear, drawLine, drawDashedLine, drawArc } from '../utils/draw';
@@ -107,14 +110,19 @@ export default {
     },
     // 切换图片
     changeImage() {
+      Indicator.open();
       const img = new Image();
-      // img.src =  proxyUrl(this.url) // 网络图片
+      // img.src = proxyUrl(this.url); // 网络图片
       img.src = proxyUrl(url); // 本地图片
       img.onerror = () => {
-        console.log('图片加载失败，请刷新后重试！');
+        Indicator.close();
+        Toast({
+          message: '图片加载失败，请刷新后重试！'
+        });
       };
 
       img.onload = () => {
+        Indicator.close();
         con.clearRect(0, 0, canvas.width, canvas.height);
         conImg.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvasImg.width, canvasImg.height);
         this.mouseEvent();
@@ -122,6 +130,7 @@ export default {
     },
     // 旋转图片
     rotateImage(angle) {
+      Indicator.open();
       conImg.clearRect(0, 0, canvasImg.width, canvasImg.height);
       con.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -129,10 +138,14 @@ export default {
       img.src = proxyUrl(url);
 
       img.onerror = () => {
-        console.log('图片加载失败，请刷新后重试！');
+        Indicator.close();
+        Toast({
+          message: '图片加载失败，请刷新后重试！'
+        });
       };
 
       img.onload = () => {
+        Indicator.close();
         if (angle === 0) {
           // 旋转 0
           conImg.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvasImg.width, canvasImg.height);
@@ -340,6 +353,9 @@ export default {
         const file = canvas.toDataURL('image/jpeg');
         // 合并成base64图片地址
         console.log(file);
+        Message({
+          message: '保存成功'
+        });
       };
     }
 
