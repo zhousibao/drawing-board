@@ -26,7 +26,6 @@
 </template>
 
 <script>
-import { Message } from 'element-ui';
 import { PopoverDefault, PopoverPen, PopoverEraser, PopoverTextarea, PopoverShape, PopoverClear } from '../components/popoverTool';
 import { ActionRotate, ActionSave } from '../components/actionTool';
 import { windowToCanvas, drawPath, drawClipPathToEraser, createTextarea, drawTextarea, saveImageData, restoreImageData, calcRect, drawRect, drawClipPathToClear, drawLine, drawDashedLine, drawArc } from '../utils/draw';
@@ -112,11 +111,10 @@ export default {
       // img.src =  proxyUrl(this.url) // 网络图片
       img.src = proxyUrl(url); // 本地图片
       img.onerror = () => {
-        Message.error('图片加载失败，请刷新后重试！');
+        console.log('图片加载失败，请刷新后重试！');
       };
 
       img.onload = () => {
-        Message.success('图片加载成功！');
         con.clearRect(0, 0, canvas.width, canvas.height);
         conImg.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvasImg.width, canvasImg.height);
         this.mouseEvent();
@@ -131,11 +129,10 @@ export default {
       img.src = proxyUrl(url);
 
       img.onerror = () => {
-        Message.error('图片加载失败，请刷新后重试！');
+        console.log('图片加载失败，请刷新后重试！');
       };
 
       img.onload = () => {
-        // Message.success('图片加载成功！');
         if (angle === 0) {
           // 旋转 0
           conImg.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvasImg.width, canvasImg.height);
