@@ -18,3 +18,5 @@ npm start  or  npm run serve
 ### 注意事项
 - 旋转图片后原图片编辑将不会被保留
 - 网络图片会污染绘图环境，请使用代理路径处理。
+- 多边形绘制均为正多边形。
+- 椭圆绘制 使用CanvasRenderingContext2D.ellipse() 函数，仅Chrome和Opera浏览器支持。

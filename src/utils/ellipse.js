@@ -67,8 +67,8 @@ class Ellipse {
     const angle = this.getAngle();
     const radian = angle / 180 * Math.PI; // 弧度
 
-    axis.a = radius * Math.cos(radian);
-    axis.b = radius * Math.sin(radian);
+    axis.a = Math.abs(radius * Math.cos(radian));
+    axis.b = Math.abs(radius * Math.sin(radian));
 
     return axis;
   }
@@ -77,7 +77,13 @@ class Ellipse {
     const axis = this.getAxis();
 
     con.beginPath();
-    con.ellipse(this.startPoint.x, this.startPoint.y, axis.a, axis.b, 0, 0, Math.PI * 2, true);
+    if (con.ellipse) {
+      con.ellipse(this.startPoint.x, this.startPoint.y, axis.a, axis.b, 0, 0, Math.PI * 2, true);
+    } else {
+      console.log('浏览器不支持绘制椭圆函数ellipse');
+    }
+
+
     con.closePath();
   }
   stroke(con) {

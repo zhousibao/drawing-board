@@ -6,7 +6,7 @@
       popper-class="popover-popover"
       placement="top-start"
       :visible-arrow="false"
-      width="280"
+      width="320"
       trigger="click"
     >
       <div class="detail" @mouseleave="mouseleave">
@@ -71,7 +71,7 @@ export default {
     return {
       popover: false,
       // shapeList
-      shapeList: ['line', 'dashed', 'arc', 'triangle', 'rect', 'hexagon', 'stars', 'ellipse'],
+      shapeList: ['line', 'dashed', 'arc', 'ellipse', 'triangle', 'rect', 'hexagon', 'stars'],
       // shapeList
       colorList: ['#EF4C4F', '#f90', '#1afa29', '#1296db', '#d4237a', '#000']
 
@@ -120,7 +120,7 @@ export default {
 }
 
 .detail{
-  width: 280px;
+  width: 320px;
   background: @default;
 
   .detail-top{
