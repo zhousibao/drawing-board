@@ -116,7 +116,7 @@ export function drawRect(con, rect, isFill, style) {
 export function drawClipPathToClear(canvas, con, rect) {
   con.save();
   con.beginPath();
-  con.rect(rect.x, rect.y, rect.width, rect.height);
+  con.rect(rect.x - 1, rect.y, rect.width + 2, rect.height); // 左右两边多计算一个像素是为了彻底清空鼠标移动过程中绘制的背景层。
   con.clip();
   con.save();
   con.globalCompositeOperation = 'destination-out';
