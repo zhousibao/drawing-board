@@ -16,6 +16,7 @@
         <PopoverShape :action="action" :shape-type="shapeType" :shape-color="shapeColor" :is-fill="isFill" @popoverShape="popoverShape" />
         <PopoverEraser :action="action" :eraser-radius="eraserRadius" @popoverEraser="popoverEraser" />
         <PopoverClear :action="action" @popoverClear="changeType" />
+        <PopoverDrag :action="action" @popoverDrag="changeType" />
       </div>
       <div class="menu-right">
         <ActionRotate :angle="angle" @actionRotate="actionRotate" />
@@ -29,11 +30,12 @@
 import Indicator from '../components/Indicator';
 import Toast from '../components/Toast';
 import Message from '../components/Message';
-import { PopoverDefault, PopoverPen, PopoverEraser, PopoverTextarea, PopoverShape, PopoverClear } from '../components/popoverTool';
+import { PopoverDefault, PopoverPen, PopoverEraser, PopoverTextarea, PopoverShape, PopoverClear, PopoverDrag } from '../components/popoverTool';
 import { ActionRotate, ActionSave } from '../components/actionTool';
-import { windowToCanvas, drawPath, drawClipPathToEraser, createTextarea, drawTextarea, saveImageData, restoreImageData, calcRect, drawRect, drawClipPathToClear, drawLine, drawDashedLine, drawArc } from '../utils/draw';
+import { windowToCanvas, drawPath, drawClipPathToEraser, saveImageData, restoreImageData, calcRect, drawRect, drawClipPathToClear, drawLine, drawDashedLine, drawArc } from '../utils/draw';
 import Polygon from '../utils/polygon';
 import Stars from '../utils/stars';
+import Text, { createDom } from '../utils/text';
 import Ellipse from '../utils/ellipse';
 import { proxyUrl } from '../utils/tools';
 import url from '../assets/picture/tu.jpg';
@@ -48,6 +50,7 @@ export default {
     PopoverTextarea,
     PopoverShape,
     PopoverClear,
+    PopoverDrag,
 
     ActionRotate,
     ActionSave
@@ -84,7 +87,13 @@ export default {
 
 
       // rotate
-      angle: 0
+      angle: 0,
+
+      // drag文本
+      textList: [], // 保存文本记录
+      dragging: null, // 待拖动的文本
+      draggingOffsetX: '',
+      draggingOffsetY: ''
     };
   },
   computed: {
@@ -190,14 +199,16 @@ export default {
           if (canTextarea) {
             // 添加textarea文本框
             this.startPoint = loc;
-            const textarea = createTextarea(this.startPoint);
+            const textarea = createDom(this.startPoint);
             canvasTextarea.appendChild(textarea);
             document.getElementById('textarea').focus();
             canTextarea = false;
           } else {
             // 绘制textarea文本
             const textarea = document.getElementById('textarea');
-            drawTextarea(con, textarea.value, this.startPoint, this.fontSize, this.fontColor);
+            const text = new Text(this.startPoint, textarea.value, this.fontSize, this.fontColor);
+            text.draw(con);
+            this.textList.push(text); // 保存文本记录
             canvasTextarea.removeChild(textarea);
             canTextarea = true;
           }
@@ -211,6 +222,17 @@ export default {
           this.imageData = saveImageData(canvas, con);
           this.startPoint = loc;
           this.endPoint = loc;
+        }
+        if (this.action === 'drag') {
+          this.textList.forEach((text) => {
+            text.createPath(con);
+            if (con.isPointInPath(loc.x, loc.y)) {
+              this.dragging = text;
+              this.draggingOffsetX = loc.x - text.startPoint.x;
+              this.draggingOffsetY = loc.y - text.startPoint.y;
+              // 后面的文本会覆盖前面的，所以只移动后添加的文本。
+            }
+          });
         }
       };
 
@@ -275,6 +297,14 @@ export default {
             }
           }
         }
+        if (this.action === 'drag' && this.dragging) {
+          this.dragging.startPoint.x = loc.x - this.draggingOffsetX;
+          this.dragging.startPoint.y = loc.y - this.draggingOffsetY;
+          con.clearRect(0, 0, canvas.width, canvas.height);
+          this.textList.forEach((text) => {
+            text.draw(con);
+          });
+        }
       };
 
       canvas.onmouseup = (e) => {
@@ -296,6 +326,7 @@ export default {
           drawClipPathToClear(canvas, con, rect);
         }
 
+        this.dragging = null;
         canAction = false;
       };
     },

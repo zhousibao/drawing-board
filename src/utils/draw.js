@@ -35,38 +35,6 @@ export function drawClipPathToEraser(canvas, con, loc, eraserRadius) {
   con.restore();
 }
 
-// 创建textarea
-export function createTextarea(loc) {
-  const textarea = document.createElement('textarea');
-  textarea.id = 'textarea';
-  textarea.rows = 3;
-  textarea.autofocus = true;
-  textarea.placeholder = '请输入回车键换行..';
-  textarea.style.position = 'absolute';
-  textarea.style.left = `${loc.x}px`;
-  textarea.style.top = `${loc.y}px`;
-  textarea.style.zIndex = '11';
-
-  return textarea;
-}
-
-// 绘制textarea
-export function drawTextarea(con, value, loc, fontSize, fontColor) {
-  const arr = value.split('\n');
-  con.save();
-  con.textAlign = 'start';
-  con.textBaseLine = 'bottom';
-  con.font = `${fontSize}px Arial`;
-  con.fillStyle = fontColor;
-  const lineHeight = Math.ceil(con.measureText('W').width + (con.measureText('W').width / 6));
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i]) {
-      con.fillText(arr[i], loc.x, loc.y + (lineHeight * i) + ((lineHeight * 2) / 3));
-    }
-  }
-  con.restore();
-}
-
 // 保留当前画布ImageData
 export function saveImageData(canvas, con) {
   return con.getImageData(0, 0, canvas.width, canvas.height);
