@@ -25,6 +25,7 @@ module.exports = {
     "no-mixed-operators": 0, // 循序混合运算
   },
   parserOptions: {
-    parser: 'babel-eslint'
+    parser: 'babel-eslint',
+    sourceType: 'module'
   }
 };

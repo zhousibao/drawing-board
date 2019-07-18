@@ -36,6 +36,7 @@ module.exports = {
   productionSourceMap: false,
 
   chainWebpack: (config) => {
+    config.performance.set('hints', false);
     config.module.rules.delete('svg');
     config.module
       .rule('svg-smart')
