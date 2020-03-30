@@ -2,6 +2,7 @@ const { resolve } = require('path');
 
 module.exports = {
   publicPath: process.env.VUE_APP_BASE_URL,
+  filenameHashing: false,
   devServer: {
     overlay: {
       warnings: true,
