@@ -82,7 +82,7 @@ class Ellipse {
       con.ellipse(this.startPoint.x, this.startPoint.y, axis.a, axis.b, 0, 0, Math.PI * 2, true);
     } else {
       Message({
-        message: '浏览器不支持绘制椭圆函数ellipse'
+        message: '浏览器不支持绘制椭圆函数ellipse',
       });
     }
 

@@ -15,9 +15,9 @@ function Toast({ message, duration = 2000 }) {
       return {
         message,
         showWrap: true, // 是否显示组件
-        showContent: true // 作用:在隐藏组件之前,显示隐藏动画
+        showContent: true, // 作用:在隐藏组件之前,显示隐藏动画
       };
-    }
+    },
   });
   document.body.appendChild(toastDom.$el);
 

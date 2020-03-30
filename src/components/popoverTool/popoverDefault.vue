@@ -11,8 +11,8 @@ export default {
     // 当前的绘图方式
     action: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -33,8 +33,8 @@ export default {
     // 选择默认
     onActive() {
       this.$emit('popoverDefault', 'default');
-    }
-  }
+    },
+  },
 };
 </script>
 <style rel="stylesheet/less" lang="less" scoped>

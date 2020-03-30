@@ -13,9 +13,9 @@ function Message({ message }) {
     data() {
       return {
         message,
-        open: true // 是否显示组件
+        open: true, // 是否显示组件
       };
-    }
+    },
   });
   document.body.appendChild(MessageDom.$el);
 }

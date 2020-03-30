@@ -9,7 +9,7 @@ export default {
   open() {
     if (!instance) {
       instance = new Indicator({
-        el: document.createElement('div')
+        el: document.createElement('div'),
       });
     }
     if (instance.visible) return;
@@ -24,5 +24,5 @@ export default {
     if (instance) {
       instance.visible = false;
     }
-  }
+  },
 };

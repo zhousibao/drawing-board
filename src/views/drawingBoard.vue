@@ -53,13 +53,13 @@ export default {
     PopoverDrag,
 
     ActionRotate,
-    ActionSave
+    ActionSave,
   },
   props: {
     url: {
       type: String,
-      default: 'https://raw.githubusercontent.com/zhousibao/drawing-board/master/src/assets/picture/tu.jpg'
-    }
+      default: 'https://raw.githubusercontent.com/zhousibao/drawing-board/master/src/assets/picture/tu.jpg',
+    },
   },
   data() {
     return {
@@ -93,7 +93,7 @@ export default {
       textList: [], // 保存文本记录
       dragging: null, // 待拖动的文本
       draggingOffsetX: '',
-      draggingOffsetY: ''
+      draggingOffsetY: '',
     };
   },
   computed: {
@@ -126,7 +126,7 @@ export default {
       img.onerror = () => {
         Indicator.close();
         Toast({
-          message: '图片加载失败，请刷新后重试！'
+          message: '图片加载失败，请刷新后重试！',
         });
       };
 
@@ -149,7 +149,7 @@ export default {
       img.onerror = () => {
         Indicator.close();
         Toast({
-          message: '图片加载失败，请刷新后重试！'
+          message: '图片加载失败，请刷新后重试！',
         });
       };
 
@@ -385,13 +385,13 @@ export default {
         // 合并成base64图片地址
         console.log(file);
         Message({
-          message: '保存成功'
+          message: '保存成功',
         });
       };
-    }
+    },
 
 
-  }
+  },
 };
 </script>
 <style rel="stylesheet/less" lang="less" scoped>

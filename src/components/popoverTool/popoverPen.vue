@@ -35,17 +35,17 @@ export default {
     // 当前字体大小
     lineWidth: {
       type: Number,
-      default: 1
+      default: 1,
     },
     lineColor: {
       type: String,
-      default: '#EF4C4F'
+      default: '#EF4C4F',
     },
     // 当前的绘图方式
     action: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -56,10 +56,10 @@ export default {
         { key: 8, value: 3 },
         { key: 12, value: 6 },
         { key: 17, value: 9 },
-        { key: 22, value: 12 }
+        { key: 22, value: 12 },
       ],
       // lineColor种类
-      colorList: ['#EF4C4F', '#f90', '#f4ea2a', '#1afa29', '#1296db', '#13227a', '#d4237a', '#8a8a8a', '#515151', '#000']
+      colorList: ['#EF4C4F', '#f90', '#f4ea2a', '#1afa29', '#1296db', '#13227a', '#d4237a', '#8a8a8a', '#515151', '#000'],
 
     };
   },
@@ -89,8 +89,8 @@ export default {
     // 关闭popover
     mouseleave() {
       this.popover = false;
-    }
-  }
+    },
+  },
 };
 </script>
 <style rel="stylesheet/less" lang="less" scoped>

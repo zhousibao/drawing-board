@@ -28,13 +28,13 @@ export default {
     // 当前橡皮檫的直径大小
     eraserRadius: {
       type: Number,
-      default: 32
+      default: 32,
     },
     // 当前的绘图方式
     action: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -45,8 +45,8 @@ export default {
         { key: 16, value: 24 },
         { key: 20, value: 32 },
         { key: 25, value: 40 },
-        { key: 30, value: 50 }
-      ]
+        { key: 30, value: 50 },
+      ],
 
     };
   },
@@ -72,8 +72,8 @@ export default {
     // 关闭popover
     mouseleave() {
       this.popover = false;
-    }
-  }
+    },
+  },
 };
 </script>
 <style rel="stylesheet/less" lang="less" scoped>

@@ -23,7 +23,7 @@ export default {
   },
   data() {
     return {
-      open: true
+      open: true,
     };
   },
   computed: {
@@ -41,8 +41,8 @@ export default {
   methods: {
     close() {
       this.open = false;
-    }
-  }
+    },
+  },
 };
 </script>
 

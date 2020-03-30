@@ -49,23 +49,23 @@ export default {
     // 填充或描边
     isFill: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // 绘制颜色
     shapeColor: {
       type: String,
-      default: '#EF4C4F'
+      default: '#EF4C4F',
     },
     // 当前的shape类型
     shapeType: {
       type: String,
-      default: 'line'
+      default: 'line',
     },
     // 当前的绘图方式
     action: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -73,7 +73,7 @@ export default {
       // shapeList
       shapeList: ['line', 'dashed', 'arc', 'ellipse', 'triangle', 'rect', 'hexagon', 'stars'],
       // shapeList
-      colorList: ['#EF4C4F', '#f90', '#1afa29', '#1296db', '#d4237a', '#000']
+      colorList: ['#EF4C4F', '#f90', '#1afa29', '#1296db', '#d4237a', '#000'],
 
 
     };
@@ -106,8 +106,8 @@ export default {
     // 关闭popover
     mouseleave() {
       this.popover = false;
-    }
-  }
+    },
+  },
 };
 </script>
 <style rel="stylesheet/less" lang="less" scoped>

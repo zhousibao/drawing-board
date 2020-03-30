@@ -7,9 +7,9 @@
 export default {
   data() {
     return {
-      visible: false
+      visible: false,
     };
-  }
+  },
 };
 </script>
 <style rel="stylesheet/less" lang="less" scoped>

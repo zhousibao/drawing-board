@@ -21,7 +21,7 @@ module.exports = {
     'no-tabs': 'off',
     "no-plusplus": 0,
     "no-multiple-empty-lines": [2, {"max": 2}],//空行最多不能超过2行
-    "comma-dangle": [2, "never"], // 对象最后元素不加逗号
+    "comma-dangle": [2, "always-multiline"], // 对象最后元素不加逗号
     "no-mixed-operators": 0, // 循序混合运算
   },
   parserOptions: {
